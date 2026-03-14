@@ -1,3 +1,16 @@
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("Bot running");
+});
+
+app.listen(PORT, () => {
+  console.log("Server started");
+});
+
 const fetch = require("node-fetch")
 
 const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json"
