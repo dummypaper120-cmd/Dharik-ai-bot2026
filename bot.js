@@ -1,29 +1,28 @@
-const express = require("express");
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-app.get("/", (req, res) => {
-  res.send("Bot running");
-});
-
-app.listen(PORT, () => {
-  console.log("Server started");
-});
-
+const express = require("express")
 const fetch = require("node-fetch")
 
-const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json"
+const app = express()
+const PORT = process.env.PORT || 3000
 
-const TG_TOKEN = "8685608225:AAH9_ncjvU38F3XxAlnXqbgmwqO7s0rIysU"
-const TG_CHAT_ID = "-1003558999419"
+app.get("/", (req, res) => {
+  res.send("DHARIK AI BOT RUNNING")
+})
 
-let predictions = {}
-let currentLevel = 1
-let lastProcessedPeriod = ""
-let lastSignal = ""
+app.listen(PORT, () => {
+  console.log("Server started on port " + PORT)
+})
 
-const levelSettings = {
+const API_URL="https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json"
+
+const TG_TOKEN="YOUR_BOT_TOKEN"
+const TG_CHAT_ID="YOUR_CHAT_ID"
+
+let predictions={}
+let currentLevel=1
+let lastProcessedPeriod=""
+let lastSignal=""
+
+const levelSettings={
 1:{amount:"₹10",nextOnLoss:2},
 2:{amount:"₹30",nextOnLoss:3},
 3:{amount:"₹70",nextOnLoss:4},
@@ -46,7 +45,7 @@ await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CH
 
 }catch(e){
 
-console.log("Telegram error")
+console.log("telegram error")
 
 }
 
@@ -56,30 +55,30 @@ async function updateSystem(){
 
 try{
 
-const response = await fetch(`${API_URL}?gameCode=WinGo_30S&timestamp=${Date.now()}`)
-const json = await response.json()
+const response=await fetch(`${API_URL}?gameCode=WinGo_30S&timestamp=${Date.now()}`)
+const json=await response.json()
 
-const list = json.data.list
+const list=json.data.list
 
-const lastPeriodData = list[0]
+const lastPeriodData=list[0]
 
-const nextPeriod = (BigInt(lastPeriodData.issueNumber) + 1n).toString()
+const nextPeriod=(BigInt(lastPeriodData.issueNumber)+1n).toString()
 
-if(lastProcessedPeriod !== lastPeriodData.issueNumber){
+if(lastProcessedPeriod!==lastPeriodData.issueNumber){
 
-const prevPredict = predictions[lastPeriodData.issueNumber]
+const prevPredict=predictions[lastPeriodData.issueNumber]
 
-const actualResult = parseInt(lastPeriodData.number) >= 5 ? "BIG" : "SMALL"
+const actualResult=parseInt(lastPeriodData.number)>=5?"BIG":"SMALL"
 
 if(prevPredict){
 
-if(prevPredict === actualResult){
+if(prevPredict===actualResult){
 
 await sendTelegram(`💸 WIN 💸
 
 RESULT: ${actualResult}`)
 
-currentLevel = 1
+currentLevel=1
 
 }else{
 
@@ -87,28 +86,28 @@ await sendTelegram(`😓 LOSS 😓
 
 RESULT: ${actualResult}`)
 
-currentLevel = levelSettings[currentLevel].nextOnLoss
+currentLevel=levelSettings[currentLevel].nextOnLoss
 
 }
 
 }
 
-lastProcessedPeriod = lastPeriodData.issueNumber
+lastProcessedPeriod=lastPeriodData.issueNumber
 
 }
 
-const hist = list.slice(0,10).map(i => parseInt(i.number) >= 5 ? "BIG" : "SMALL")
+const hist=list.slice(0,10).map(i=>parseInt(i.number)>=5?"BIG":"SMALL")
 
-const bigCount = hist.filter(x => x === "BIG").length
-const smallCount = 10 - bigCount
+const bigCount=hist.filter(x=>x==="BIG").length
+const smallCount=10-bigCount
 
-let finalPredict = bigCount >= smallCount ? "BIG" : "SMALL"
+let finalPredict=bigCount>=smallCount?"BIG":"SMALL"
 
-predictions[nextPeriod] = finalPredict
+predictions[nextPeriod]=finalPredict
 
-if(lastSignal !== nextPeriod){
+if(lastSignal!==nextPeriod){
 
-const signalMsg = `🚀 DHARIK AI SIGNAL 🚀
+const signalMsg=`🚀 DHARIK AI SIGNAL 🚀
 
 📌 PERIOD: ${nextPeriod}
 
@@ -118,7 +117,7 @@ const signalMsg = `🚀 DHARIK AI SIGNAL 🚀
 
 await sendTelegram(signalMsg)
 
-lastSignal = nextPeriod
+lastSignal=nextPeriod
 
 }
 
