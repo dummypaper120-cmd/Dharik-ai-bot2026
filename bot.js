@@ -2,10 +2,16 @@ async function updateSystem(){
 
 try{
 
-const res = await fetch(`${API_URL}?gameCode=WinGo_30S&timestamp=${Date.now()}`)
+const res = await fetch(API_URL+"?gameCode=WinGo_30S&timestamp="+Date.now())
+
+if(!res.ok){
+console.log("API response error")
+return
+}
+
 const json = await res.json()
 
-if(!json.data || !json.data.list){
+if(!json || !json.data || !json.data.list){
 console.log("API data missing")
 return
 }
@@ -13,7 +19,7 @@ return
 const list = json.data.list
 
 if(list.length === 0){
-console.log("No history data")
+console.log("Empty history")
 return
 }
 
@@ -53,14 +59,14 @@ lastProcessedPeriod = last.issueNumber
 
 }
 
-const hist=list.slice(0,10).map(x=>parseInt(x.number)>=5?"BIG":"SMALL")
+const hist = list.slice(0,10).map(x=>parseInt(x.number)>=5?"BIG":"SMALL")
 
-const big=hist.filter(x=>x==="BIG").length
-const small=10-big
+const big = hist.filter(x=>x==="BIG").length
+const small = 10-big
 
 const prediction = big>=small?"BIG":"SMALL"
 
-predictions[next]=prediction
+predictions[next] = prediction
 
 if(lastSignal!==next){
 
@@ -72,13 +78,13 @@ await sendTelegram(`🚀 DHARIK AI SIGNAL 🚀
 
 💰 STRATEGY: LEVEL ${currentLevel} (${levelSettings[currentLevel].amount})`)
 
-lastSignal=next
+lastSignal = next
 
 }
 
 }catch(e){
 
-console.log("sync error",e)
+console.log("sync error:",e.message)
 
 }
 
