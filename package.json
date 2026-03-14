@@ -1,0 +1,7 @@
+{
+"name":"dharik-ai-bot",
+"version":"1.0.0",
+"dependencies":{
+"node-fetch":"2"
+}
+}
